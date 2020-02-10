@@ -1,38 +1,24 @@
-from rest_framework import generics
-from blog.serializers import PostSerializer
+from blog.serializers import PostSerializer, PostCreateSerializer
 from blog.models import Post
-from rest_framework.response import Response
-from rest_framework import mixins
+from rest_framework import generics
 
 
-class PostList(generics.ListCreateAPIView):
-    queryset = Post.objects.all()
+class PostListView(generics.ListAPIView):
     serializer_class = PostSerializer
+    queryset = Post.objects.all()
 
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = PostSerializer(queryset, many=True)
-        return Response(serializer.data)
+
+class PostCreateView(generics.CreateAPIView):
+    serializer_class = PostCreateSerializer
+    queryset = Post.objects.all()
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
 
-class DetailView(generics.GenericAPIView,
-                 mixins.RetrieveModelMixin,
-                 mixins.UpdateModelMixin,
-                 mixins.DestroyModelMixin):
-    queryset = Post.objects.all()
+class PostCreatUpdateDeleteRetrive(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PostSerializer
+    queryset = Post.objects.all()
 
-    def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)
-
-    def put(self, request, *args, **kwargs):
-        return self.partial_update(request, *args, **kwargs)
-
-    def patch(self, request, *args, **kwargs):
-        return super().partial_update(request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        return super().destroy(request, *args, **kwargs)
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)

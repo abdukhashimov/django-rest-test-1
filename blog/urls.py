@@ -1,7 +1,12 @@
-from django.urls import path
-from blog.views import PostList, DetailView
+from django.urls import path, include
+from blog.views import (
+    PostListView,
+    PostCreatUpdateDeleteRetrive,
+    PostCreateView
+)
 
 urlpatterns = [
-    path('list/', PostList.as_view(), name='list'),
-    path('list/<int:pk>/', DetailView.as_view(), name='detail'),
+    path('posts/', PostListView.as_view(), name='list'),
+    path('posts/create/', PostCreateView.as_view(), name='create'),
+    path('posts/<int:pk>/', PostCreatUpdateDeleteRetrive.as_view(), name='crud')
 ]
